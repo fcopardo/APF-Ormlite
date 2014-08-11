@@ -44,17 +44,19 @@ public class TestDao extends BaseAndroidTestClass {
 
             System.out.println("My ID is: "+daoFactory.getProperDao(PersonTest.class, getContext()).getSource().getId());
 
-            org.junit.Assert.assertEquals("Failure: search", false, daoFactory.getProperDao(PersonTest.class, getContext()).find());
+            org.junit.Assert.assertEquals("Failure: search", true, daoFactory.getProperDao(PersonTest.class, getContext()).find());
             System.out.println("\nMy inner result is: "+daoFactory.getProperDao(PersonTest.class, getContext()).getSource().getId());
 
             org.junit.Assert.assertEquals("Failure: search", true, daoFactory.getProperDao(PersonTest.class, getContext()).find("my social id u"));
+            boolean bol = false;
             try {
-                daoFactory.getProperDao(PersonTest.class, getContext()).getMyDao().queryForId(person2.getId());
-                org.junit.Assert.assertEquals("Failure: search", true, true);
+                daoFactory.getProperDao(PersonTest.class, getContext()).setSource(daoFactory.getProperDao(PersonTest.class, getContext()).getMyDao().queryForId(person2.getId()));
+                bol = true;
             } catch (SQLException e) {
-                //org.junit.Assert.assertEquals("Failure: search", true, false);
                 e.printStackTrace();
             }
+            org.junit.Assert.assertEquals("Failure: search", true, bol);
+
             System.out.println("\nMy outer result is: "+daoFactory.getProperDao(PersonTest.class, getContext()).getSource().getId());
 
         } catch (GrizzlyModelException e) {
@@ -62,7 +64,7 @@ public class TestDao extends BaseAndroidTestClass {
         }
     }
 
-    /*
+
     @Test
     public void TestDao02() {
 
@@ -89,7 +91,7 @@ public class TestDao extends BaseAndroidTestClass {
 
             System.out.println("My ID is: "+personDao.getSource().getId());
 
-            org.junit.Assert.assertEquals("Failure: search", false, personDao.find());
+            org.junit.Assert.assertEquals("Failure: search", true, personDao.find());
             System.out.println("\nMy inner result is: "+personDao.getSource().getId());
 
             org.junit.Assert.assertEquals("Failure: search", true, personDao.find("my social id"));
@@ -99,7 +101,7 @@ public class TestDao extends BaseAndroidTestClass {
         } catch (GrizzlyModelException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
 
 }

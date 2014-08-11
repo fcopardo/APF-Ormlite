@@ -8,10 +8,10 @@ import com.j256.ormlite.field.DatabaseField;
  */
 public class PersonTest extends BaseModel<String> {
 
-    @DatabaseField(columnName = "ID", id = true)
+    @DatabaseField(columnName = "id", id = true)
     private String id;
 
-    @DatabaseField(columnName = "NAME")
+    @DatabaseField(columnName = "name")
     private String name;
 
     public PersonTest(){
