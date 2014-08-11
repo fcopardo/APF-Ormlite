@@ -1,0 +1,41 @@
+This package contains the DAO classes.
+AdvancedDao<T, C, O> allows to create a generic interface for CRUD methods and general queries.
+It works in the following way:
+
+-T represents the Entity, or table to be managed with this DAO.
+-C represents the class of the ID field of the table.
+-O represents a schema class, used to create the database connection.
+
+AdvancedDao provides CRUD methods, in pair implementations, one using arguments, and another not using them.
+The first one receives an object of T type; in other words, an object of the type defined when creating the DAO.
+Example:
+
+AdvancedDao<BaseToken, String, ORMschema> daoToken = new AdvancedDao<>(BaseToken.class, String.class, ORMSchema.class);
+BaseToken token = new BaseToken();
+token.setId("My token");
+daoToken.create(BaseToken);
+
+This allows to work with series of objects. The other implementation:
+
+ AdvancedDao<BaseToken, String, ORMschema> daoToken = new AdvancedDao<>(BaseToken.class, String.class, ORMSchema.class);
+ daoToken.getSource().setId("My token");
+ daoToken.create();
+
+ Allows to work with an inner object of T type, available through the getSource() and setSource(T entity) method.
+ This is the preferred method to perform a search operation:
+
+  if(daoToken.find("my token")){
+    System.out.println("The token exists! it is:"+daoToken.getSource().toString());
+  }
+
+  First, do a find operation, and if it is successful, get the result with getSource().
+
+  DaoFactory should be used to create the DAO objects. It eases the process by centralizing the schema class to use,
+  and obtains the ID field class from the BaseModel subclass. This way the developer only needs to know which
+  model is going to use. An instance of DaoFactory is contained into the DataManager class.
+
+
+
+
+
+

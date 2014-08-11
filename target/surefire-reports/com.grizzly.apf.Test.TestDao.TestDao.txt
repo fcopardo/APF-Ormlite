@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: com.grizzly.apf.Test.TestDao.TestDao
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 14.867 sec <<< FAILURE! - in com.grizzly.apf.Test.TestDao.TestDao
+TestDao01(com.grizzly.apf.Test.TestDao.TestDao)  Time elapsed: 14.507 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at com.grizzly.apf.Test.TestDao.TestDao.TestDao01(TestDao.java:58)
+

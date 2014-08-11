@@ -1,0 +1,39 @@
+This package contains every model intended to be stored in the database. Every class inside it must extend BaseModel<C>
+in the following way:
+
+public class BaseVersions extends BaseModel<Integer> {
+
+    public static final String ID = "id";
+
+    @DatabaseField(columnName = ID, id = true, generatedId = true)
+    private int idField;
+
+    public BaseVersions() {
+        super(Integer.class);
+    }
+
+    public int getIdField() {
+        return idField;
+    }
+
+    public void setIdField(int idField) {
+        this.idField = idField;
+    }
+
+    @Override
+    public Integer getId() {
+        return getIdField();
+    }
+
+    @Override
+    public void setId(Integer id) {
+        setIdField(id);
+    }
+
+}
+
+Where C represents the class that the ID field will have. That way the AdvancedDao class will be able to access the
+ID field without any actions by us. Two methods are enforced by the BaseModel class, getId() and setId(C). They must
+return the getter and setter of the ID field. Of course, if you name the ID field "id", you can use them directly.
+
+

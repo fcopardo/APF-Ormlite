@@ -1,0 +1,4 @@
+com\grizzly\apf\Test\BaseAndroidTestClass.class
+com\grizzly\apf\Test\TestEntities\PersonTest.class
+com\grizzly\apf\Test\TestDao\TestDao.class
+com\grizzly\apf\Test\TestSchemas\TestSchema.class
