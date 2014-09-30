@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. BBR Mobile.
+ * Copyright (c) 2014. Fco Pardo Baeza.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -273,7 +273,7 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
     public boolean find() {
         C oldId = (C) source.getId();
         try {
-            setDao(getMyDao());
+            setMyDao(getMyDao());
             setSource(getMyDao().queryForId((C)source.getId()));
             return true;
         } catch (Exception db) {
