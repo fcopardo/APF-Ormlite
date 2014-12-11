@@ -18,6 +18,9 @@ package com.grizzly.apf.Ormlite;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import com.grizzly.apf.Ormlite.CallBacks.OnConnectionClose;
+import com.grizzly.apf.Ormlite.CallBacks.OnSchemaCreation;
+import com.grizzly.apf.Ormlite.CallBacks.OnSchemaUpdate;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
@@ -26,6 +29,14 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
  * Ormlite manager, manages the database connection and provides the database schema.
  */
 public class ORMSchema extends OrmLiteSqliteOpenHelper {
+
+    /**
+     * Class members
+     * Callbacks for database creation, update, and connection closing.
+     */
+    private OnSchemaCreation schemaCreator = null;
+    private OnSchemaUpdate schemaUpdater = null;
+    private OnConnectionClose connectionCloser = null;
 
 
     public ORMSchema(Context context, String database, int version) {
@@ -43,6 +54,18 @@ public class ORMSchema extends OrmLiteSqliteOpenHelper {
         // TODO Auto-generated constructor stub
     }
 
+    public void setSchemaCreator(OnSchemaCreation schemaCreator) {
+        this.schemaCreator = schemaCreator;
+    }
+
+    public void setSchemaUpdater(OnSchemaUpdate schemaUpdater) {
+        this.schemaUpdater = schemaUpdater;
+    }
+
+    public void setConnectionCloser(OnConnectionClose connectionCloser) {
+        this.connectionCloser = connectionCloser;
+    }
+
     /**
      * Creates the database, if not found, in the connection specified in connectionSource.
      */
@@ -50,6 +73,9 @@ public class ORMSchema extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
 
         try {
+            if(schemaCreator != null){
+                schemaCreator.createTables(sqLiteDatabase, connectionSource);
+            }
             /**
              * Add all the entities to be created here.
              * Example:
@@ -72,6 +98,9 @@ public class ORMSchema extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(final SQLiteDatabase db, final ConnectionSource connectionSource, int oldVersion, final int newVersion) {
         db.beginTransaction();
         try {
+            if(schemaUpdater != null){
+                schemaUpdater.updateTables(db, connectionSource, oldVersion, newVersion);
+            }
             /**
              * Add all the update statements here.
              * Example:
@@ -91,6 +120,9 @@ public class ORMSchema extends OrmLiteSqliteOpenHelper {
     @Override
     public void close() {
         super.close();
+        if(connectionCloser!=null){
+            connectionCloser.closeConnection();
+        }
 
         /**
          * Set all DAOs to null to close the database.

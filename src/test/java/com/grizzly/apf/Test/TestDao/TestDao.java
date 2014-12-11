@@ -1,12 +1,16 @@
 package com.grizzly.apf.Test.TestDao;
 
+import android.database.sqlite.SQLiteDatabase;
 import com.grizzly.apf.Dao.Ormlite.AdvancedDao;
 import com.grizzly.apf.Dao.Ormlite.DaoFactory;
 import com.grizzly.apf.Exceptions.GrizzlyModelException;
+import com.grizzly.apf.Ormlite.CallBacks.OnSchemaCreation;
+import com.grizzly.apf.Ormlite.ORMSchema;
 import com.grizzly.apf.Test.BaseAndroidTestClass;
 import com.grizzly.apf.Test.TestEntities.PersonTest;
 import com.grizzly.apf.Test.TestSchemas.TestSchema;
-
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -70,6 +74,7 @@ public class TestDao extends BaseAndroidTestClass {
 
         DaoFactory<TestSchema> daoFactory = new DaoFactory<>(TestSchema.class);
 
+
         PersonTest person = new PersonTest();
         person.setId("my social id");
         person.setName("Fco Pardo");
@@ -103,5 +108,5 @@ public class TestDao extends BaseAndroidTestClass {
         }
     }
 
-
 }
+

@@ -25,6 +25,8 @@ import com.j256.ormlite.support.ConnectionSource;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import com.j256.ormlite.table.TableUtils;
 
+import java.sql.SQLException;
+
 /**
  * Ormlite manager, manages the database connection and provides the database schema.
  */
@@ -60,7 +62,7 @@ public class TestSchema extends OrmLiteSqliteOpenHelper {
              */
         TableUtils.createTable(connectionSource, PersonTest.class);
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             /**
              * It should be an SQLException, but since there is no code to fire the exception is not possible to use it.
              * UPDATE: Now it can be an SQL Exception.

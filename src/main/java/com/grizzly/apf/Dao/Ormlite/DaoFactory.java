@@ -21,7 +21,11 @@ import android.content.Context;
 import com.grizzly.apf.Dao.SpecificMemoryStorage;
 import com.grizzly.apf.Exceptions.GrizzlyModelException;
 import com.grizzly.apf.Exceptions.GrizzlyNotFoundException;
+import com.grizzly.apf.Ormlite.CallBacks.OnConnectionClose;
+import com.grizzly.apf.Ormlite.CallBacks.OnSchemaCreation;
+import com.grizzly.apf.Ormlite.CallBacks.OnSchemaUpdate;
 import com.grizzly.apf.Ormlite.Model.BaseModel;
+import com.grizzly.apf.Ormlite.ORMSchema;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 
 /**
@@ -31,18 +35,19 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
 
     private Class<O> schemaClass;
-
-    private SpecificMemoryStorage daoStorage = new SpecificMemoryStorage();
-
     private String databaseName = "";
+    private SpecificMemoryStorage daoStorage = new SpecificMemoryStorage();
+    private OnSchemaCreation schemaCreation = null;
+    private OnSchemaUpdate schemaUpdate = null;
+    private OnConnectionClose connectionClose = null;
 
     public DaoFactory(Class<O> schemaClass) {
         this.schemaClass = schemaClass;
     }
-
     public DaoFactory(Class<O> schemaClass, Context context) {
         this.schemaClass = schemaClass;
     }
+
 
     public void setDatabaseName(String s){
         if( !(s==null || "".trim().equalsIgnoreCase(s)) ){
@@ -57,6 +62,18 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
             return null;
         }
         return databaseName;
+    }
+
+    public void setSchemaCreation(OnSchemaCreation schemaCreation) {
+        this.schemaCreation = schemaCreation;
+    }
+
+    public void setSchemaUpdate(OnSchemaUpdate schemaUpdate) {
+        this.schemaUpdate = schemaUpdate;
+    }
+
+    public void setConnectionClose(OnConnectionClose connectionClose) {
+        this.connectionClose = connectionClose;
     }
 
     /**
@@ -91,6 +108,16 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
             if(getDatabaseName()!=null){
                 dao.setDatabaseName(databaseName);
             }
+
+            if(schemaClass.getClass().getCanonicalName().equalsIgnoreCase(ORMSchema.class.getCanonicalName())){
+                if(schemaCreation!=null){
+                    ((ORMSchema)dao.getHelper()).setSchemaCreator(schemaCreation);
+                }
+                if(schemaCreation!=null){
+                    ((ORMSchema)dao.getHelper()).setSchemaCreator(schemaCreation);
+                }
+            }
+
             daoStorage.create(key, dao);
             return dao;
         }
@@ -98,13 +125,13 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
 
     /**
      * Return an instance of AdvancedDao so one of this methods can be called. If the entity's class is not supported,
-     * throws a BBRModelException.
+     * throws a GrizzlyModelException.
      *
      * @param entity  the entity to provide the DAO.
      * @param context the application context.
      * @param <T>     a subclass of BaseModel.
      * @return an AdvancedDao instance.
-     * @throws com.bbr.Android.Exceptions.BBRModelException
+     * @throws com.grizzly.apf.Exceptions.GrizzlyModelException
      */
     public <T extends BaseModel, C> AdvancedDao<T, C, O> getProperDao(T entity, Context context) throws GrizzlyModelException {
 
@@ -112,6 +139,14 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
             AdvancedDao<T, C, O> dao = (AdvancedDao<T, C, O>) this.getSingleDaoInstance(entity.getClass());
             dao.setSource(entity);
             dao.setContext(context);
+            if(schemaClass.getClass().getCanonicalName().equalsIgnoreCase(ORMSchema.class.getCanonicalName())){
+                if(schemaCreation!=null){
+                    ((ORMSchema)dao.getHelper()).setSchemaCreator(schemaCreation);
+                }
+                if(schemaCreation!=null){
+                    ((ORMSchema)dao.getHelper()).setSchemaCreator(schemaCreation);
+                }
+            }
             return dao;
         } catch (Exception e) {
             throw new GrizzlyModelException();
@@ -123,6 +158,14 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
         try {
             AdvancedDao<T, C, O> dao = this.getSingleDaoInstance(entityClass);
             dao.setContext(context);
+            if(schemaClass.getClass().getCanonicalName().equalsIgnoreCase(ORMSchema.class.getCanonicalName())){
+                if(schemaCreation!=null){
+                    ((ORMSchema)dao.getHelper()).setSchemaCreator(schemaCreation);
+                }
+                if(schemaCreation!=null){
+                    ((ORMSchema)dao.getHelper()).setSchemaCreator(schemaCreation);
+                }
+            }
             return dao;
         } catch (Exception e) {
             throw new GrizzlyModelException();
@@ -131,14 +174,14 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
 
     /**
      * Performs a search and returns a T entity matching the desired results. If there isn't any results, then throws a
-     * BBRNotFoundException. If the T class provided is not supported, throws a BBRModelException.
+     * GrizzlyNotFoundException. If the T class provided is not supported, throws a GrizzlyModelException.
      *
      * @param entity  the entity with the ID to be searched.
      * @param context application context.
      * @param <T>     A subclass of BaseModel.
      * @return a T object with the search result.
-     * @throws com.bbr.Android.Exceptions.BBRModelException
-     * @throws com.bbr.Android.Exceptions.BBRNotFoundException
+     * @throws com.grizzly.apf.Exceptions.GrizzlyModelException
+     * @throws com.grizzly.apf.Exceptions.GrizzlyNotFoundException
      */
     public <T extends BaseModel, C> T getProperDaoResponse(T entity, Context context) throws GrizzlyModelException, GrizzlyNotFoundException {
 
