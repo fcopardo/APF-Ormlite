@@ -162,7 +162,19 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
         ErrorHandler.addError(t, entityClass, ErrorHandler.errorDao);
     }
 
+    /**
+     * Returns the entity affected by the CRUD operations. If neither an operation has been done nor an entity has been set, it will return a new instance.
+     * @return
+     */
     public T getSource() {
+        if(source == null){
+            try {
+                source = entityClass.newInstance();
+            } catch (InstantiationException|IllegalAccessException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
         return source;
     }
 
@@ -211,7 +223,7 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
      * @param o an object to be instantiated into the database.
      * @return true if the instance is created successfully.
      */
-    public boolean createFromObject(Object o) {
+    private boolean createFromObject(Object o) {
         try {
             Container objectFactory = new Container(this.source);
             T n = (T) objectFactory.createContents();
@@ -313,7 +325,7 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
             getMyDao().update(this.getSource());
             return true;
         } catch (Exception db) {
-            this.handleError("The update operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + (C) source.getId());
+            this.handleError("The update operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + source.getId());
             return false;
         }
     }
@@ -332,7 +344,27 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
             }
             return true;
         } catch (Exception db) {
-            this.handleError("The getEntity and deletion operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + (C) source.getId());
+            this.handleError("The getEntity and deletion operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + source.getId());
+            return false;
+        }
+    }
+
+    /**
+     * Creates or updates an object, depending if it's in the database or not.
+     * @param a The entity to be persisted
+     * @return true if the entity was persisted, false if either create or update were impossible.
+     */
+    public boolean persist(T a) {
+        try {
+            if (this.find((C)a.getId())) {
+                this.update(a);
+            }
+            else{
+                this.create(a);
+            }
+            return true;
+        } catch (Exception db) {
+            this.handleError("The getEntity and create/update operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + source.getId());
             return false;
         }
     }

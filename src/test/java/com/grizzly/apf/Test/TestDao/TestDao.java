@@ -32,6 +32,8 @@ public class TestDao extends BaseAndroidTestClass {
             daoFactory.getProperDao(PersonTest.class, getContext()).setSource(person);
             org.junit.Assert.assertEquals("Failure: creation", true, daoFactory.getProperDao(PersonTest.class, getContext()).create());
             org.junit.Assert.assertEquals("Failure: creation", false, daoFactory.getProperDao(PersonTest.class, getContext()).create(person));
+            org.junit.Assert.assertEquals("Failure: persist", true, daoFactory.getProperDao(PersonTest.class, getContext()).persist(person));
+
 
             PersonTest person2 = daoFactory.getProperDao(PersonTest.class, getContext()).getSource();
 
@@ -78,6 +80,43 @@ public class TestDao extends BaseAndroidTestClass {
             AdvancedDao<PersonTest, String, TestSchema> personDao = daoFactory.getProperDao(PersonTest.class, getContext());
             personDao.setSource(person);
             org.junit.Assert.assertEquals("Failure: creation", true, personDao.create());
+            org.junit.Assert.assertEquals("Failure: creation", false, personDao.create(person));
+
+            PersonTest person2 = personDao.getSource();
+
+            System.out.println("\n My person is:"+person2.getId());
+            person2.setName("a new name");
+            personDao.setSource(person2);
+
+            org.junit.Assert.assertEquals("Failure: updating", true, personDao.update());
+            personDao.setSource(person);
+
+            System.out.println("My ID is: "+personDao.getSource().getId());
+
+            org.junit.Assert.assertEquals("Failure: search", true, personDao.find());
+            System.out.println("\nMy inner result is: "+personDao.getSource().getId());
+
+            org.junit.Assert.assertEquals("Failure: search", true, personDao.find("my social id"));
+            System.out.println("\nMy outer result is: "+personDao.getSource().getId());
+
+
+        } catch (GrizzlyModelException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void TestDao03() {
+
+        DaoFactory<TestSchema> daoFactory = new DaoFactory<>(TestSchema.class);
+
+        PersonTest person = new PersonTest();
+        person.setId("my social id");
+        person.setName("Fco Pardo");
+
+        try {
+            AdvancedDao<PersonTest, String, TestSchema> personDao = daoFactory.getProperDao(PersonTest.class, getContext());
+            org.junit.Assert.assertEquals("Failure: creation", true, personDao.persist(person));
             org.junit.Assert.assertEquals("Failure: creation", false, personDao.create(person));
 
             PersonTest person2 = personDao.getSource();
