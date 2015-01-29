@@ -98,13 +98,13 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
 
     /**
      * Return an instance of AdvancedDao so one of this methods can be called. If the entity's class is not supported,
-     * throws a BBRModelException.
+     * throws a GrizzlyModelException.
      *
      * @param entity  the entity to provide the DAO.
      * @param context the application context.
      * @param <T>     a subclass of BaseModel.
      * @return an AdvancedDao instance.
-     * @throws com.bbr.Android.Exceptions.BBRModelException
+     * @throws com.grizzly.apf.Exceptions.GrizzlyModelException
      */
     public <T extends BaseModel, C> AdvancedDao<T, C, O> getProperDao(T entity, Context context) throws GrizzlyModelException {
 
@@ -131,14 +131,14 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
 
     /**
      * Performs a search and returns a T entity matching the desired results. If there isn't any results, then throws a
-     * BBRNotFoundException. If the T class provided is not supported, throws a BBRModelException.
+     * GrizzlyNotFoundException. If the T class provided is not supported, throws a GrizzlyModelException.
      *
      * @param entity  the entity with the ID to be searched.
      * @param context application context.
      * @param <T>     A subclass of BaseModel.
      * @return a T object with the search result.
-     * @throws com.bbr.Android.Exceptions.BBRModelException
-     * @throws com.bbr.Android.Exceptions.BBRNotFoundException
+     * @throws com.grizzly.apf.Exceptions.GrizzlyModelException
+     * @throws com.grizzly.apf.Exceptions.GrizzlyNotFoundException
      */
     public <T extends BaseModel, C> T getProperDaoResponse(T entity, Context context) throws GrizzlyModelException, GrizzlyNotFoundException {
 

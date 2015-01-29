@@ -175,7 +175,7 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
                 return null;
             }
         }
-        return source;
+        return (T)source;
     }
 
     public void setSource(T source) {
