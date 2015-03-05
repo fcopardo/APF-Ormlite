@@ -356,15 +356,18 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
      */
     public boolean persist(T a) {
         try {
-            if (this.find((C)a.getId())) {
-                this.update(a);
+            boolean result = false;
+            if (!this.create(a)) {
+               result = this.update(a);
             }
             else{
-                this.create(a);
+                result = true;
             }
-            return true;
+            return result;
         } catch (Exception db) {
             this.handleError("The getEntity and create/update operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + source.getId());
+            System.out.println("PERSIST FAIL");
+            db.printStackTrace();
             return false;
         }
     }
