@@ -357,11 +357,11 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
     public boolean persist(T a) {
         try {
             boolean result = false;
-            if (!this.create(a)) {
-               result = this.update(a);
+            if (!this.find((C)a.getId())) {
+               result = this.create(a);
             }
             else{
-                result = true;
+                result = this.update(a);
             }
             return result;
         } catch (Exception db) {
