@@ -269,6 +269,7 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
         try {
             setMyDao(getMyDao());
             this.setSource(getMyDao().queryForId(id));
+            if(getSource() == null) return false;
             return true;
         } catch (Exception db) {
             this.handleError("The getEntity operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + id);
@@ -356,14 +357,12 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
      */
     public boolean persist(T a) {
         try {
-            boolean result = false;
-            if (this.create(a)) {
-               result = true;
+            if (this.find((C)a.getId())) {
+               return this.update(a);
             }
             else{
-                return this.update(a);
+                return this.create(a);
             }
-            return result;
         } catch (Exception db) {
             this.handleError("The getEntity and create/update operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + source.getId());
             System.out.println("PERSIST FAIL");
