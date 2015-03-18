@@ -49,7 +49,8 @@ public class TestDao extends BaseAndroidTestClass {
             org.junit.Assert.assertEquals("Failure: search", true, daoFactory.getProperDao(PersonTest.class, getContext()).find());
             System.out.println("\nMy inner result is: "+daoFactory.getProperDao(PersonTest.class, getContext()).getSource().getId());
 
-            org.junit.Assert.assertEquals("Failure: search", true, daoFactory.getProperDao(PersonTest.class, getContext()).find("my social id u"));
+            org.junit.Assert.assertEquals("Failure: search", false, daoFactory.getProperDao(PersonTest.class, getContext()).find("my social id u"));
+            org.junit.Assert.assertEquals("Success: search", true, daoFactory.getProperDao(PersonTest.class, getContext()).find("my social id"));
             boolean bol = false;
             try {
                 daoFactory.getProperDao(PersonTest.class, getContext()).setSource(daoFactory.getProperDao(PersonTest.class, getContext()).getMyDao().queryForId(person2.getId()));

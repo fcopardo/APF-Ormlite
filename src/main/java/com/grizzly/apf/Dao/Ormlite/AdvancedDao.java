@@ -248,8 +248,8 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
     public boolean create(T entity) {
         try {
             setMyDao(getMyDao());
-            getMyDao().create(entity);
-            return true;
+            if(getMyDao().create(entity)==1) return true;
+            return false;
         } catch (Exception db) {
             this.handleError("Error while creating " + source.getClass().getCanonicalName());
             this.handleError("The creation operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the given entity");
@@ -268,11 +268,16 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
     public boolean find(C id) {
         try {
             setMyDao(getMyDao());
-            this.setSource(getMyDao().queryForId(id));
-            if(getSource() == null) return false;
-            return true;
+            if(getMyDao().queryForId(id)==null){
+                return false;
+            }
+            else{
+                this.setSource(getMyDao().queryForId(id));
+                return true;
+            }
         } catch (Exception db) {
             this.handleError("The getEntity operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + id);
+            db.printStackTrace();
             return false;
         }
     }
@@ -285,13 +290,20 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
      */
     public boolean find() {
         C oldId = (C) source.getId();
+        C id = (C)source.getId();
         try {
             setMyDao(getMyDao());
-            setSource(getMyDao().queryForId((C)source.getId()));
-            return true;
+            if(getMyDao().queryForId(id)==null){
+                return false;
+            }
+            else{
+                this.setSource(getMyDao().queryForId(id));
+                return true;
+            }
         } catch (Exception db) {
             source.setId(oldId);
             this.handleError("The getEntity operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + (C) source.getId());
+            db.printStackTrace();
             return false;
         }
     }
@@ -305,8 +317,8 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
     public boolean update(T entity) {
         try {
             setMyDao(getMyDao());
-            getMyDao().update(entity);
-            return true;
+            if(getMyDao().update(entity)==1) return true;
+            return false;
         } catch (Exception db) {
             this.handleError("The update operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the given entity");
             return false;
