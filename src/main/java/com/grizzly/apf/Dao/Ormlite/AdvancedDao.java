@@ -718,4 +718,39 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
         return list;
     }
 
+    /*
+    Performs a IN search
+     */
+    public List<T> getListWhereIn(boolean withID, boolean reverse, String column, List<Object> values) {
+
+        List<T> list = new ArrayList<T>();
+
+        try {
+            setMyDao(getMyDao());
+            QueryBuilder<T, C> qb = getMyDao().queryBuilder();
+            Where where = qb.where();
+            if (withID) {
+                where.eq(this.routeToId, (C) source.getId());
+                where.and();
+            }
+            where.in(column, values);
+
+            qb.setWhere(where);
+            PreparedQuery<T> preparedQuery;
+            preparedQuery = qb.prepare();
+            list = getMyDao().query(preparedQuery);
+
+        } catch (SQLException db) {
+            // TODO Auto-generated catch block
+            this.handleError("Query error: " + source.getClass().getCanonicalName() + "the query was malformed " + db.getStackTrace());
+            db.printStackTrace();
+            return list;
+        }
+
+        if (reverse) {
+            java.util.Collections.reverse(list);
+        }
+        return list;
+    }
+
 }
