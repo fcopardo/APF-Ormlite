@@ -69,7 +69,7 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
      * @return an AdvancedDao parametrized
      * as AdvancedDao<T extends BaseModel, BaseModel.getIdClass, O extends OrmLiteSqliteOpenHelper>
      */
-    public <T extends BaseModel, C> AdvancedDao<T, C, O> getSingleDaoInstance(Class<T> entityClass) {
+    public <T extends BaseModel<C>, C> AdvancedDao<T, C, O> getSingleDaoInstance(Class<T> entityClass) {
 
         Class<C> idClass = null;
         try {
@@ -106,10 +106,10 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
      * @return an AdvancedDao instance.
      * @throws com.grizzly.apf.Exceptions.GrizzlyModelException
      */
-    public <T extends BaseModel, C> AdvancedDao<T, C, O> getProperDao(T entity, Context context) throws GrizzlyModelException {
+    public <T extends BaseModel<C>, C> AdvancedDao<T, C, O> getProperDao(T entity, Context context) throws GrizzlyModelException {
 
         try {
-            AdvancedDao<T, C, O> dao = (AdvancedDao<T, C, O>) this.getSingleDaoInstance(entity.getClass());
+            AdvancedDao dao = this.getSingleDaoInstance(entity.getClass());
             dao.setSource(entity);
             dao.setContext(context);
             return dao;
@@ -118,7 +118,7 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
         }
     }
 
-    public <T extends BaseModel, C> AdvancedDao<T, C, O> getProperDao(Class<T> entityClass, Context context) throws GrizzlyModelException {
+    public <T extends BaseModel<C>, C> AdvancedDao<T, C, O> getProperDao(Class<T> entityClass, Context context) throws GrizzlyModelException {
 
         try {
             AdvancedDao<T, C, O> dao = this.getSingleDaoInstance(entityClass);
@@ -140,7 +140,7 @@ public class DaoFactory<O extends OrmLiteSqliteOpenHelper> {
      * @throws com.grizzly.apf.Exceptions.GrizzlyModelException
      * @throws com.grizzly.apf.Exceptions.GrizzlyNotFoundException
      */
-    public <T extends BaseModel, C> T getProperDaoResponse(T entity, Context context) throws GrizzlyModelException, GrizzlyNotFoundException {
+    public <T extends BaseModel<C>, C> T getProperDaoResponse(T entity, Context context) throws GrizzlyModelException, GrizzlyNotFoundException {
 
         try {
             AdvancedDao<T, C, O> dao = this.getProperDao(entity, context);

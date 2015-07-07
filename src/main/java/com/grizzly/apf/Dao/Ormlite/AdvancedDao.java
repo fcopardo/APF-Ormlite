@@ -28,10 +28,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * General DAO class. Allows to create DAOs to any entity extending BaseModel, in runtime.
@@ -42,7 +39,7 @@ import java.util.Map;
  * @author
  */
 
-public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelper> {
+public class AdvancedDao<T extends BaseModel<C>, C, O extends OrmLiteSqliteOpenHelper> {
     /**
      * entityClass: a reference to the entity's class.
      * idClass: a reference to the id's class.
@@ -289,8 +286,8 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
      * @return true if the instance is found.
      */
     public boolean find() {
-        C oldId = (C) source.getId();
-        C id = (C)source.getId();
+        C oldId = source.getId();
+        C id = source.getId();
         try {
             setMyDao(getMyDao());
             if(getMyDao().queryForId(id)==null){
@@ -369,8 +366,8 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
      */
     public boolean persist(T a) {
         try {
-            if (this.find((C)a.getId())) {
-               return this.update(a);
+            if (this.find(a.getId())) {
+                return this.update(a);
             }
             else{
                 return this.create(a);
@@ -602,7 +599,7 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
     public Map<C, T> getDataAsMap(List<T> list) {
         Map<C, T> map = new LinkedHashMap<>();
         for (T element : list) {
-            map.put((C) element.getId(), element);
+            map.put(element.getId(), element);
         }
         return map;
     }
@@ -752,5 +749,45 @@ public class AdvancedDao<T extends BaseModel, C, O extends OrmLiteSqliteOpenHelp
         }
         return list;
     }
+
+    /**
+     * Deletes all the T objects from the database.
+     *
+     */
+    public void deleteAll() {
+        try {
+            setMyDao(getMyDao());
+            getMyDao().delete(getAll(false));
+        } catch (Exception db) {
+            this.handleError("The deletion operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + (C) source.getId());
+        }
+    }
+
+    /**
+     * Deletes all the objects matching the ids from the collection argument.
+     * @param ids the ids of the objects to be deleted.
+     */
+    public void deleteByIds(Collection<C> ids) {
+        try {
+            setMyDao(getMyDao());
+            getMyDao().deleteIds(ids);
+        } catch (Exception db) {
+            this.handleError("The deletion operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + (C) source.getId());
+        }
+    }
+
+    /**
+     * Deletes all the objects into the collection from the database.
+     * @param instances a collection of T instances.
+     */
+    public void deleteCollection(List<T> instances) {
+        try {
+            setMyDao(getMyDao());
+            getMyDao().delete(instances);
+        } catch (Exception db) {
+            this.handleError("The deletion operation in the class: " + source.getClass().getCanonicalName() + " was impossible for the value: " + (C) source.getId());
+        }
+    }
+
 
 }

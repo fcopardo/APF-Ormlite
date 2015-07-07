@@ -12,6 +12,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Fco on 10-08-2014.
@@ -136,6 +138,46 @@ public class TestDao extends BaseAndroidTestClass {
 
             org.junit.Assert.assertEquals("Failure: search", true, personDao.find("my social id"));
             System.out.println("\nMy outer result is: "+personDao.getSource().getId());
+
+
+        } catch (GrizzlyModelException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void TestDao04() {
+
+        DaoFactory<TestSchema> daoFactory = new DaoFactory<>(TestSchema.class);
+
+        PersonTest person = new PersonTest();
+        person.setId("my social id");
+        person.setName("Fco Pardo");
+
+        try {
+            AdvancedDao<PersonTest, String, TestSchema> personDao = daoFactory.getProperDao(PersonTest.class, getContext());
+            org.junit.Assert.assertEquals("Failure: creation", true, personDao.persist(person));
+            person.setId(person.getId()+" 2");
+            org.junit.Assert.assertEquals("Failure: creation", true, personDao.create(person));
+            person.setId(person.getId()+" 3");
+            org.junit.Assert.assertEquals("Failure: creation", true, personDao.create(person));
+            person.setId(person.getId()+" 4");
+            org.junit.Assert.assertEquals("Failure: creation", true, personDao.create(person));
+
+            org.junit.Assert.assertEquals("Failure: search", true, personDao.find("my social id"));
+            System.out.println("\nMy outer result is: " + personDao.getSource().getId());
+
+            List<String> entitiesToDelete = new ArrayList<>();
+            entitiesToDelete.add("my social id");
+            entitiesToDelete.add("my social id 2");
+            personDao.deleteByIds(entitiesToDelete);
+
+            System.out.println("\nMy inner result is: "+personDao.getSource().getId());
+
+            org.junit.Assert.assertEquals("Failure: search", true, personDao.find("my social id"+" 2"+" 3"));
+            org.junit.Assert.assertEquals("Failure: search", false, personDao.find("my social id"));
+            System.out.println("\nMy outer result is: "+personDao.getSource().getId());
+
 
 
         } catch (GrizzlyModelException e) {
