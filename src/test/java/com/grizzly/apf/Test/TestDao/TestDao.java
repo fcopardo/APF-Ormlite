@@ -14,6 +14,7 @@ import org.robolectric.RobolectricTestRunner;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Fco on 10-08-2014.
@@ -32,7 +33,7 @@ public class TestDao extends BaseAndroidTestClass {
 
         try {
             daoFactory.getProperDao(PersonTest.class, getContext()).setSource(person);
-            org.junit.Assert.assertEquals("Failure: creation", true, daoFactory.getProperDao(PersonTest.class, getContext()).create());
+            org.junit.Assert.assertEquals("Failure: creation", true, daoFactory.getProperDao(person, getContext()).create());
             org.junit.Assert.assertEquals("Failure: creation", false, daoFactory.getProperDao(PersonTest.class, getContext()).create(person));
             org.junit.Assert.assertEquals("Failure: persist", true, daoFactory.getProperDao(PersonTest.class, getContext()).persist(person));
 
@@ -87,14 +88,14 @@ public class TestDao extends BaseAndroidTestClass {
 
             PersonTest person2 = personDao.getSource();
 
-            System.out.println("\n My person is:"+person2.getId());
+            System.out.println("\n My person is:" + person2.getId());
             person2.setName("a new name");
             personDao.setSource(person2);
 
             org.junit.Assert.assertEquals("Failure: updating", true, personDao.update());
             personDao.setSource(person);
 
-            System.out.println("My ID is: "+personDao.getSource().getId());
+            System.out.println("My ID is: " + personDao.getSource().getId());
 
             org.junit.Assert.assertEquals("Failure: search", true, personDao.find());
             System.out.println("\nMy inner result is: "+personDao.getSource().getId());
@@ -161,7 +162,7 @@ public class TestDao extends BaseAndroidTestClass {
             org.junit.Assert.assertEquals("Failure: creation", true, personDao.create(person));
             person.setId(person.getId()+" 3");
             org.junit.Assert.assertEquals("Failure: creation", true, personDao.create(person));
-            person.setId(person.getId()+" 4");
+            person.setId(person.getId() + " 4");
             org.junit.Assert.assertEquals("Failure: creation", true, personDao.create(person));
 
             org.junit.Assert.assertEquals("Failure: search", true, personDao.find("my social id"));
@@ -172,11 +173,37 @@ public class TestDao extends BaseAndroidTestClass {
             entitiesToDelete.add("my social id 2");
             personDao.deleteByIds(entitiesToDelete);
 
-            System.out.println("\nMy inner result is: "+personDao.getSource().getId());
+            System.out.println("\nMy inner result is: " + personDao.getSource().getId());
 
-            org.junit.Assert.assertEquals("Failure: search", true, personDao.find("my social id"+" 2"+" 3"));
+            org.junit.Assert.assertEquals("Failure: search", true, personDao.find("my social id" + " 2" + " 3"));
             org.junit.Assert.assertEquals("Failure: search", false, personDao.find("my social id"));
             System.out.println("\nMy outer result is: "+personDao.getSource().getId());
+
+
+
+        } catch (GrizzlyModelException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void TestDao05() {
+
+        DaoFactory<TestSchema> daoFactory = new DaoFactory<>(TestSchema.class);
+
+        PersonTest person = new PersonTest();
+        person.setId("my social id");
+        person.setName("Fco Pardo");
+
+        try {
+            AdvancedDao<PersonTest, String, TestSchema> personDao = daoFactory.getProperDao(PersonTest.class, getContext());
+            org.junit.Assert.assertEquals("Failure: creation", true, personDao.persist(person));
+
+
+            List<PersonTest> entities = daoFactory.getProperDao(PersonTest.class, getContext()).getAll(false);
+            Map<String, PersonTest> testMap = daoFactory.getProperDao(PersonTest.class, getContext()).getDataAsMap(entities);
+
+            org.junit.Assert.assertEquals("Failure: search", true, testMap.containsKey("my social id"));
 
 
 
